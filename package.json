@@ -41,7 +41,7 @@
     "husky": "^8.0.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.1",
-    "prisma": "^3.11.1"
+    "prisma": "4.10.1"
   },
   "_moduleAliases": {
     "@routes": "./routes",

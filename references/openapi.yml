@@ -1,0 +1,676 @@
+openapi: 3.0.0
+info:
+  title: son
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+      parameters: []
+      security:
+        - Authorization: []
+    patch:
+      summary: Update User Information
+      operationId: patch-users-userId
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the information of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  description: "If a new email is given, the user's email verified property will be set to false."
+                dateOfBirth:
+                  type: string
+                password:
+                  type: string
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: Patch user properties to update.
+      security:
+        - Authorization: []
+  /users:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            multipart/form-data:
+              schema:
+                type: object
+                properties: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phoneNumber:
+                  type: string
+                password:
+                  type: string
+                dateOfBirth:
+                  type: string
+                gender:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                role:
+                  type: string
+              required:
+                - username
+                - email
+                - password
+                - dateOfBirth
+                - gender
+                - createdAt
+                - updatedAt
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+      parameters: []
+  /users/me:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Internal Server Error
+      operationId: get-users-me
+      description: Get information of current user
+      security:
+        - Authorization: []
+  /users/me/friends:
+    parameters: []
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: User Not Found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '500':
+          description: Internal Server Error
+      operationId: get-users-userId-friends
+      description: Get friend list of a user
+      security:
+        - Authorization: []
+    post:
+      summary: ''
+      operationId: post-users-userId-friends
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+      description: User have a new friend
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Friend'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+  /posts:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-posts
+      security:
+        - Authorization: []
+    post:
+      summary: ''
+      operationId: post-posts
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                userId:
+                  type: string
+              required:
+                - title
+                - content
+                - userId
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  '/posts/{postId}':
+    parameters:
+      - schema:
+          type: string
+        name: postId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      operationId: get-posts-postId
+      security:
+        - Authorization: []
+  '/posts/{postId}/comments':
+    parameters:
+      - schema:
+          type: string
+        name: postId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-posts-postId-comments
+      security:
+        - Authorization: []
+    post:
+      summary: ''
+      operationId: post-posts-postId-comments
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                postId:
+                  type: string
+                userId:
+                  type: string
+                content:
+                  type: string
+              required:
+                - postId
+                - userId
+                - content
+        description: ''
+  '/posts/{postId}/reactions':
+    parameters:
+      - schema:
+          type: string
+        name: postId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reaction'
+      operationId: get-posts-postId-reactions
+      security:
+        - Authorization: []
+    post:
+      summary: ''
+      operationId: post-posts-postId-reactions
+      responses:
+        '201':
+          description: Created
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                postId:
+                  type: string
+                userId:
+                  type: string
+              required:
+                - type
+                - postId
+                - userId
+  '/posts/{postId}/comments/{commentId}':
+    parameters:
+      - schema:
+          type: string
+        name: postId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: commentId
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-posts-postId-comments-commentId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+    patch:
+      summary: ''
+      operationId: patch-posts-postId-comments-commentId
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                commentId:
+                  type: string
+                userId:
+                  type: string
+                content:
+                  type: string
+              required:
+                - commentId
+                - userId
+                - content
+  '/posts/{postId}/reactions/{reactionId}':
+    parameters:
+      - schema:
+          type: string
+        name: postId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: reactionId
+        in: path
+        required: true
+    patch:
+      summary: ''
+      operationId: patch-posts-postId-reactions-reactionId
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reactionId:
+                  type: string
+                userId:
+                  type: string
+                type:
+                  type: string
+              required:
+                - reactionId
+                - userId
+                - type
+    delete:
+      summary: ''
+      operationId: delete-posts-postId-reactions-reactionId
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+  /auth/logout:
+    post:
+      summary: ''
+      operationId: post-auth-logout
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+      security:
+        - Authorization: []
+  /auth/login:
+    post:
+      summary: ''
+      operationId: post-auth-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        '400':
+          description: Incorrect credential
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the given user.
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1997-10-31'
+        gender:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: The date that the user was created.
+        updatedAt:
+          type: string
+          format: date-time
+        role:
+          type: string
+      required:
+        - id
+        - username
+        - email
+        - dateOfBirth
+        - gender
+        - createdAt
+        - updatedAt
+        - role
+    Post:
+      title: Post
+      type: object
+      properties:
+        id:
+          type: integer
+        authorId:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - authorId
+        - title
+        - body
+        - createdAt
+        - updatedAt
+    Comment:
+      title: Comment
+      type: object
+      properties:
+        id:
+          type: integer
+        postId:
+          type: integer
+        authorId:
+          type: integer
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - postId
+        - authorId
+        - body
+        - createdAt
+    Reaction:
+      title: Reaction
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        postId:
+          type: string
+        userId:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - type
+        - postId
+        - userId
+        - createdAt
+    Friend:
+      title: Friend
+      type: object
+      properties:
+        userId:
+          type: string
+        friendId:
+          type: string
+      required:
+        - userId
+        - friendId
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+  parameters: {}
+  responses: {}
+  examples: {}

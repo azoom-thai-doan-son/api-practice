@@ -1,0 +1,58 @@
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  phoneNumber String    @unique @map("phone_number")
+  password    String
+  dateOfBirth String @map("date_of_birth")
+  gender      String
+  role        UserRole  @default(USER)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  posts       Post[]
+  comments    Comment[]
+
+  @@map("user")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  authorId  Int @map("author_id")
+  author    User     @relation(fields: [authorId], references: [id])
+  title     String
+  body      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  comments  Comment[]
+
+    @@map("post")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int @map("author_id")
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int @map("post_id")
+
+      @@map("comment")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+
+  @@map("_Role")
+}
