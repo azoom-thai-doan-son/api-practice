@@ -1,0 +1,61 @@
+{
+  "name": "sample-api",
+  "version": "2.0.1",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "prisma:migrate": "prisma migrate dev --schema=./node_modules/@azoom/db/prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema=./node_modules/@azoom/db/prisma/schema.prisma",
+    "dev": "env $(grep -v '^#' .env) nodemon index.js --exec 'node --experimental-specifier-resolution=node --experimental-modules --experimental-json-modules --loader ./helpers/module-alias/loader.js'",
+    "start": "env $(grep -v '^#' .env) node --experimental-specifier-resolution=node --experimental-modules --experimental-json-modules --loader ./helpers/module-alias/loader.js index.js",
+    "lint": "eslint --ext .js --ignore-path .gitignore .",
+    "prepare": "husky install",
+    "delete-old-staging-tags": "git fetch --tags && git push origin --delete $(git tag -l 'staging-*') || true && git fetch origin --prune 'refs/tags/*:refs/tags/*'",
+    "staging:deploy": "yarn delete-old-staging-tags && TAG=`echo staging-$(date +%Y%m%d-%H%M%S)` && git tag $TAG && git push origin $TAG"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.10.1",
+    "@sentry/node": "^7.14.1",
+    "@sentry/tracing": "^7.14.1",
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.2",
+    "express": "^4.17.3",
+    "express-openapi-validator": "^5.0.0",
+    "express-promise-router": "^4.1.1",
+    "formdata-node": "^5.0.0",
+    "got": "^12.5.3",
+    "jsonwebtoken": "^8.5.1",
+    "jws": "^4.0.0",
+    "lodash": "^4.17.21",
+    "statuses": "^2.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/eslint-parser": "^7.18.2",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^8.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.6.1",
+    "prisma": "^3.11.1"
+  },
+  "_moduleAliases": {
+    "@routes": "./routes",
+    "@const": "./constants",
+    "@middleware": "./middleware",
+    "@helpers": "./helpers",
+    "@database": "./database",
+    "@root": "./"
+  },
+  "volta": {
+    "node": "14.21.0",
+    "yarn": "1.22.17"
+  },
+  "engines": {
+    "node": "14"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@routes/*": ["./routes/*"],
+      "@const/*": ["./constants/*"],
+      "@middleware/*": ["./middleware/*"],
+      "@helpers/*": ["./helpers/*"],
+      "@database": ["./database.js"],
+      "@root/*": ["./*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

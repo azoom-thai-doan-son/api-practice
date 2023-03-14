@@ -1,0 +1,13 @@
+node_modules
+/specs/*.json
+yarn-error.log
+.env
+.DS_Store
+.env.json
+.playground
+.storage
+.vscode
+.idea
+webpack.config.local.js
+.npmrc
+cert.p12
