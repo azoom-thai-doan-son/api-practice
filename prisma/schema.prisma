@@ -5,23 +5,25 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 model User {
   id          Int        @id @default(autoincrement())
-  username    String    @unique
+  username    String
   email       String    @unique
-  phoneNumber String    @unique @map("phone_number")
+  phoneNumber String?    @unique @map("phone_number")
   password    String
-  dateOfBirth String @map("date_of_birth")
-  gender      String
+  dateOfBirth DateTime? @db.Date() @map("date_of_birth")
+  gender      Gender
   role        UserRole  @default(USER)
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   posts       Post[]
   comments    Comment[]
 
-  @@map("user")
+  @@map("users")
+
 }
 
 model Post {
@@ -34,25 +36,30 @@ model Post {
   updatedAt DateTime @updatedAt @map("updated_at")
   comments  Comment[]
 
-    @@map("post")
+  @@map("posts")
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
+  postId    Int @map("post_id")
+  authorId  Int @map("author_id")
   body      String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int @map("author_id")
   post      Post     @relation(fields: [postId], references: [id])
-  postId    Int @map("post_id")
 
-      @@map("comment")
+  @@map("comments")
 }
 
 enum UserRole {
   ADMIN
   USER
-
-  @@map("_Role")
+  @@map("user_role")
+}
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  @@map("gender")
 }

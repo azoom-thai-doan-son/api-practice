@@ -4,7 +4,11 @@ export const NODE_ENV_LIST = {
   development: 'development',
 }
 
-export const ROLE = {
-  admin: 'ADMIN',
-  user: 'USER',
+const DEFAULT_POST_QUERY = {
+  page: 1,
+  limit: 20,
+  keyword: '',
+  authorId: '',
+  orderBy: 'id',
+  orderDirection: 'asc',
 }

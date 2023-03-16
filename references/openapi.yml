@@ -89,17 +89,7 @@ paths:
       responses:
         '200':
           description: User Created
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-            multipart/form-data:
-              schema:
-                type: object
-                properties: {}
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
+          content: {}
         '400':
           description: Missing Required Information
         '409':
@@ -121,28 +111,16 @@ paths:
                   type: string
                 dateOfBirth:
                   type: string
+                  format: date
                 gender:
                   type: string
-                createdAt:
-                  type: string
-                  format: date-time
-                updatedAt:
-                  type: string
-                  format: date-time
                 role:
                   type: string
               required:
                 - username
                 - email
                 - password
-                - dateOfBirth
                 - gender
-                - createdAt
-                - updatedAt
-          application/xml:
-            schema:
-              type: object
-              properties: {}
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
       parameters: []
@@ -524,10 +502,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  token:
+                  accessToken:
                     type: string
                 required:
-                  - token
+                  - accessToken
         '400':
           description: Incorrect credential
         '500':
@@ -538,12 +516,12 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                emailOrPhoneNumber:
                   type: string
                 password:
                   type: string
               required:
-                - email
+                - emailOrPhoneNumber
                 - password
 components:
   schemas:
